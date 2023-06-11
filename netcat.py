@@ -129,11 +129,7 @@ class Attacker:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = args.target
         self.port = args.port
-        if args.data:
-            self.data = args.data
-            self.data = self.data.encode()
-            self.data = self.data.decode("unicode-escape")
-            self.data = self.data.encode("utf-8")
+        self.args = args
         self.bytes_to_recv = args.bytes
 
     def connect(self):
@@ -155,24 +151,29 @@ class Attacker:
                 Colors.red_to_yellow, interval=0.01
             )
 
-        if self.data:
+        if self.args.data:
+            data = self.args.data
+            data = data.encode()
+            data = data.decode("unicode-escape")
+            data = data.encode("utf-8")
+
             Write.Print(
                 "\n\n[*] Trying to send the data...",
                 Colors.red_to_yellow, interval=0.01
             )
-            self.send()
+            self.send(data)
         else:
             Write.Print(
-                "\n\n[*] You does\'\t typed any data, "
+                "\n\n[*] You does not typed any data, "
                 "so the script will try to receive "
-                "response from the server...",
+                "response from the server...\n",
                 Colors.red_to_yellow, interval=0.01
             )
             self.receive()
 
-    def send(self):
+    def send(self, data):
         try:
-            self.client.send(self.data)
+            self.client.send(data)
         except Exception as e:
             Write.Print(
                 "\n\n[*] An error occurred while "
